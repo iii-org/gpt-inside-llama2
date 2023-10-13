@@ -1,0 +1,105 @@
+version: '3.7'
+networks:
+    nginx_network:
+        external:
+            name: nginx_network
+
+services:
+    gpt-insight-model-llama2:
+        container_name: gpt-insight-model-llama2
+        build:
+            context: ./build/train
+            dockerfile: dockerfile
+        image: iii-dsi/gpt-insight-model:cuda11.8
+        runtime: nvidia
+        shm_size: "64gb"
+        stdin_open: true
+        tty: true
+        volumes:
+            - ~/.cache:/root/.cache
+            - ./src/train:/app
+            - ./model:/model
+            - ./data:/data
+        environment:
+            NCCL_SOCKET_NTHREADS: "16"
+            NCCL_NSOCKS_PERTHREAD: "1"
+            NCCL_P2P_LEVEL: "PIX"
+            NCCL_P2P_DISABLE: "0"
+            TZ: "Asia/Taipei"
+            HF_TOKEN: ${HF_TOKEN}
+            WANDB_DISABLED: "true"
+            NVIDIA_VISIBLE_DEVICES: "all"
+            NVIDIA_DRIVER_CAPABILITIES: "compute,utility"
+        logging:
+            driver: "json-file"
+            options:
+                max-size: "1g"
+        ulimits:
+            memlock: -1
+        networks:
+            - nginx_network
+
+    gpt-insight-inference-llama2:
+        container_name: gpt-insight-inference-llama2
+        restart: always
+        build:
+            context: ./build/inference
+            dockerfile: dockerfile
+        image: iii-dsi/gpt-insight-inference:cuda11.8
+        runtime: nvidia
+        shm_size: "64gb"
+        volumes:
+            - ./src/inference:/app
+            - ./data:/data
+            - ./build/inference/nginx:/etc/nginx/conf.d
+            - ~/.cache:/root/.cache
+            - ./model:/model
+            - ./log:/chat_log
+        environment:
+            TZ: "Asia/Taipei"
+            REF_DATA: "/data/raw_data.xlsx"
+            GPT_FORMAT_TYPE: "llama"
+            GPT_MODEL_NAME_OR_DIR: "/model/fine-tunning"
+            BI_ENCODER: "paraphrase-multilingual-mpnet-base-v2"
+            CROSS_ENCODER: "nreimers/mmarco-mMiniLMv2-L12-H384-v1"
+            HF_TOKEN: ${HF_TOKEN}
+            UWSGI_CHEAPER: "0"
+            UWSGI_PROCESSES: "1"
+            CUDA_LAUNCH_BLOCKING: "1"
+            NCCL_SOCKET_NTHREADS: "1"
+            NCCL_NSOCKS_PERTHREAD: "1"
+            NCCL_P2P_LEVEL: "SYS"
+            NCCL_P2P_DISABLE: "0"
+            NCCL_SOCKET_IFNAME: "docker*"
+            NVIDIA_VISIBLE_DEVICES: "all"
+            NVIDIA_DRIVER_CAPABILITIES: "compute,utility"
+        logging:
+            driver: "json-file"
+            options:
+                max-size: "1g"
+        ulimits:
+            memlock: -1
+        ports:
+            - 52022:80
+        networks:
+            - nginx_network
+
+    gpt-insight-web-llama2:
+        image: nginx:1.19.3
+        container_name: gpt-insight-web-llama2
+        restart: always
+        environment:
+            TZ: "Asia/Taipei"
+        volumes:
+            - ./build/interface/nginx.conf:/etc/nginx/nginx.conf
+            - ./build/interface/config/:/etc/nginx/conf.d/
+            - ./build/interface/web:/web
+        ports:
+            - 80:80
+            - 443:443
+        logging:
+            driver: "json-file"
+            options:
+                max-size: "1g"
+        networks:
+            - nginx_network

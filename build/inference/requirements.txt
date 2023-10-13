@@ -1,0 +1,8 @@
+uwsgi==2.0.21
+flask==2.2.5
+flask_restful==0.3.10
+sentence-transformers==2.2.2
+optimum==1.13.2
+bitsandbytes==0.41.1
+flask_wtf==1.2.1
+opencc-python-reimplemented==0.1.7

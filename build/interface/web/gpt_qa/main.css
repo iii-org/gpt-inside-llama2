@@ -1,0 +1,44 @@
+body {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+.conversation-body {
+  height: 400px;
+  overflow-y: auto;
+}
+
+.user-question {
+  background-color: #f0f0f0;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.bot-answer {
+  background-color: #dce6f1;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+@keyframes typing {
+  from {
+    width: 0;
+  }
+
+  to {
+    width: 100%;
+  }
+}
+
+.typing-indicator {
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.typing-text {
+  display: inline-block;
+  animation: typing 1s infinite alternate;
+}
