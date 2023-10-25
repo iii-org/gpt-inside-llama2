@@ -2,7 +2,7 @@
 
 # Introduction
 
-This is an open-source tool that allows businesses to easily import their own data using Excel. The tool can be run in a company's private cloud environment to prevent sensitive data from leaking. It offers two mainstream AI models for businesses to choose from, and future updates will include security verification features to make AI chat services more secure and reliable. For more information, please refer to the [introduction website](http://www.openiii.org/) of this tool.
+This is an open-source tool that allows businesses to easily import their own data using Excel. The tool can be run in a company's private cloud environment to prevent sensitive data from leaking. It offers two mainstream AI models for businesses to choose from, and future updates will include security verification features to make AI chat services more secure and reliable. For more information, please refer to the [introduction website](https://www.gptinside.openiii.org/) of this tool.
 
 This tool is supported by the [Administration for Digital Industries (ADI), Ministry of Digital Affairs, Republic of China (Taiwan)](https://moda.gov.tw/ADI/).
 # Table of Contents
